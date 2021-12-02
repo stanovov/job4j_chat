@@ -1,7 +1,9 @@
 package ru.job4j.chat.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "persons")
@@ -18,26 +20,24 @@ public class Person {
 
     @ManyToOne
     @JoinTable(
-            name = "persons_in_rooms",
-            joinColumns = {@JoinColumn(name = "person_id", nullable = false, unique = true)},
-            inverseJoinColumns = {@JoinColumn(name = "room_id", nullable = false)}
-    )
-    private Room room;
-
-    @ManyToOne
-    @JoinTable(
             name = "role_of_persons",
             joinColumns = {@JoinColumn(name = "person_id", nullable = false, unique = true)},
             inverseJoinColumns = {@JoinColumn(name = "role_id", nullable = false)}
     )
     private Role role;
 
-    public static Person of(String username, String password,
-                            Room room, Role role) {
+    @ManyToMany
+    @JoinTable(
+            name = "persons_in_rooms",
+            joinColumns = {@JoinColumn(name = "person_id", nullable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "room_id", nullable = false)}
+    )
+    private Set<Room> rooms = new HashSet<>();
+
+    public static Person of(String username, String password, Role role) {
         Person person = new Person();
         person.setUsername(username);
         person.setPassword(password);
-        person.setRoom(room);
         person.setRole(role);
         return person;
     }
@@ -66,20 +66,24 @@ public class Person {
         this.password = password;
     }
 
-    public Room getRoom() {
-        return room;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-
     public Role getRole() {
         return role;
     }
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Set<Room> getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(Set<Room> rooms) {
+        this.rooms = rooms;
+    }
+
+    public void addRoom(Room room) {
+        this.rooms.add(room);
     }
 
     @Override

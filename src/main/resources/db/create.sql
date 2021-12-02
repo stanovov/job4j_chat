@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS messages
 
 CREATE TABLE IF NOT EXISTS persons_in_rooms
 (
-    person_id INT NOT NULL UNIQUE,
+    person_id INT NOT NULL,
     room_id   INT NOT NULL,
     FOREIGN KEY (person_id) REFERENCES persons (id),
     FOREIGN KEY (room_id) REFERENCES rooms (id)

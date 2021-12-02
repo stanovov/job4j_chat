@@ -23,6 +23,7 @@ public class Job4jChatApplication {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     public static void main(String[] args) {
         SpringApplication.run(Job4jChatApplication.class, args);
     }

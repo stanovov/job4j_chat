@@ -19,7 +19,7 @@ public class Room {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "rooms", fetch = FetchType.LAZY)
     @Fetch(FetchMode.JOIN)
     @JsonIgnore
     private Set<Person> persons = new HashSet<>();

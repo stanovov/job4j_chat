@@ -11,6 +11,7 @@ import ru.job4j.chat.repository.PersonRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -43,6 +44,33 @@ public class PersonController {
         );
     }
 
+    @GetMapping("/{id}/role/")
+    public ResponseEntity<Role> findPersonRoleById(@PathVariable int id) {
+        var person = personRepo.findById(id);
+        Role role = null;
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        if (person.isPresent()) {
+            status = HttpStatus.OK;
+            role = person.get().getRole();
+        }
+        return new ResponseEntity<>(
+                role == null ? new Role() : role,
+                status
+        );
+    }
+
+    @GetMapping("/{id}/rooms/")
+    public ResponseEntity<Set<Room>> findPersonRoomsById(@PathVariable int id) {
+        var person = personRepo.findById(id);
+        Set<Room> rooms = Set.of();
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        if (person.isPresent()) {
+            status = HttpStatus.OK;
+            rooms = person.get().getRooms();
+        }
+        return new ResponseEntity<>(rooms, status);
+    }
+
     @PostMapping("/sign-up")
     public void signUp(@RequestBody Person person) {
         person.setPassword(encoder.encode(person.getPassword()));
@@ -67,14 +95,14 @@ public class PersonController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{id}/room/")
-    public ResponseEntity<Void> updateRoom(@PathVariable int id, @RequestBody Room room) {
+    @PutMapping("/{id}/rooms/")
+    public ResponseEntity<Void> addRoom(@PathVariable int id, @RequestBody Room room) {
         Optional<Person> optionalPerson = personRepo.findById(id);
         if (optionalPerson.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         Person person = optionalPerson.get();
-        person.setRoom(room);
+        person.addRoom(room);
         personRepo.save(person);
         return ResponseEntity.ok().build();
     }
@@ -99,14 +127,14 @@ public class PersonController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}/room/")
-    public ResponseEntity<Void> deleteRoom(@PathVariable int id) {
+    @DeleteMapping("/{id}/rooms/{roomId}")
+    public ResponseEntity<Void> deleteRoom(@PathVariable int id, @PathVariable int roomId) {
         Optional<Person> optionalPerson = personRepo.findById(id);
         if (optionalPerson.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         Person person = optionalPerson.get();
-        person.setRoom(null);
+        person.getRooms().removeIf(room -> room.getId() == roomId);
         personRepo.save(person);
         return ResponseEntity.ok().build();
     }
