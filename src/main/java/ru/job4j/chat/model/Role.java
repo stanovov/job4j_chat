@@ -1,4 +1,4 @@
-package ru.jobj4.chat.model;
+package ru.job4j.chat.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Fetch;

@@ -1,10 +1,10 @@
-package ru.jobj4.chat.controller;
+package ru.job4j.chat.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.jobj4.chat.model.Role;
-import ru.jobj4.chat.repository.RoleRepository;
+import ru.job4j.chat.model.Role;
+import ru.job4j.chat.repository.RoleRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

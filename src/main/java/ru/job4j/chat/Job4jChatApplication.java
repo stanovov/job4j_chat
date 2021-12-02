@@ -1,10 +1,9 @@
-package ru.jobj4.chat;
+package ru.job4j.chat;
 
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 

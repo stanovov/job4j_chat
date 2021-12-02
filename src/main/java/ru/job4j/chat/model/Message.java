@@ -1,4 +1,4 @@
-package ru.jobj4.chat.model;
+package ru.job4j.chat.model;
 
 import org.hibernate.annotations.CreationTimestamp;
 

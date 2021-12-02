@@ -1,7 +1,7 @@
-package ru.jobj4.chat.repository;
+package ru.job4j.chat.repository;
 
 import org.springframework.data.repository.CrudRepository;
-import ru.jobj4.chat.model.Role;
+import ru.job4j.chat.model.Role;
 
 public interface RoleRepository extends CrudRepository<Role, Integer> {
 }
