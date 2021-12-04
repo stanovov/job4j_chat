@@ -3,6 +3,7 @@ package ru.job4j.chat.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.chat.model.Room;
 import ru.job4j.chat.repository.RoomRepository;
 
@@ -29,15 +30,17 @@ public class RoomController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Room> findById(@PathVariable int id) {
-        var room = roomRepo.findById(id);
-        return new ResponseEntity<>(
-                room.orElse(new Room()),
-                room.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND
-        );
+        return roomRepo.findById(id)
+                .map(room -> new ResponseEntity<>(room, HttpStatus.OK))
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        String.format("Room is not found by id %d", id)
+                ));
     }
 
     @PostMapping("/")
     public ResponseEntity<Room> create(@RequestBody Room room) {
+        validate(room);
         return new ResponseEntity<>(
                 roomRepo.save(room),
                 HttpStatus.CREATED
@@ -46,6 +49,7 @@ public class RoomController {
 
     @PutMapping("/")
     public ResponseEntity<Void> update(@RequestBody Room room) {
+        validate(room);
         roomRepo.save(room);
         return ResponseEntity.ok().build();
     }
@@ -56,5 +60,11 @@ public class RoomController {
         room.setId(id);
         roomRepo.delete(room);
         return ResponseEntity.ok().build();
+    }
+
+    private void validate(Room room) {
+        if (room.getName() == null) {
+            throw new NullPointerException("Room name mustn't be empty");
+        }
     }
 }

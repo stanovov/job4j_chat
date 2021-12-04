@@ -3,6 +3,7 @@ package ru.job4j.chat.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.chat.model.Message;
 import ru.job4j.chat.repository.MessageRepository;
 
@@ -29,15 +30,17 @@ public class MessageController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Message> findById(@PathVariable int id) {
-        var message = messageRepo.findById(id);
-        return new ResponseEntity<>(
-                message.orElse(new Message()),
-                message.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND
-        );
+        return messageRepo.findById(id)
+                .map(message -> new ResponseEntity<>(message, HttpStatus.OK))
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        String.format("Message is not found by id %d", id)
+                ));
     }
 
     @PostMapping("/")
     public ResponseEntity<Message> create(@RequestBody Message message) {
+        validate(message);
         return new ResponseEntity<>(
                 messageRepo.save(message),
                 HttpStatus.CREATED
@@ -46,6 +49,7 @@ public class MessageController {
 
     @PutMapping("/")
     public ResponseEntity<Void> update(@RequestBody Message message) {
+        validate(message);
         messageRepo.save(message);
         return ResponseEntity.ok().build();
     }
@@ -56,5 +60,11 @@ public class MessageController {
         message.setId(id);
         messageRepo.delete(message);
         return ResponseEntity.ok().build();
+    }
+
+    private void validate(Message message) {
+        if (message.getText() == null || message.getPerson() == null || message.getRoom() == null) {
+            throw new NullPointerException("Message text, person and room mustn't be empty");
+        }
     }
 }

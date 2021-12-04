@@ -3,6 +3,7 @@ package ru.job4j.chat.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.chat.model.Role;
 import ru.job4j.chat.repository.RoleRepository;
 
@@ -29,15 +30,17 @@ public class RoleController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Role> findById(@PathVariable int id) {
-        var role = roleRepo.findById(id);
-        return new ResponseEntity<>(
-                role.orElse(new Role()),
-                role.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND
-        );
+        return roleRepo.findById(id)
+                .map(role -> new ResponseEntity<>(role, HttpStatus.OK))
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        String.format("Role is not found by id %d", id)
+                ));
     }
 
     @PostMapping("/")
     public ResponseEntity<Role> create(@RequestBody Role role) {
+        validate(role);
         return new ResponseEntity<>(
                 roleRepo.save(role),
                 HttpStatus.CREATED
@@ -46,6 +49,7 @@ public class RoleController {
 
     @PutMapping("/")
     public ResponseEntity<Void> update(@RequestBody Role role) {
+        validate(role);
         roleRepo.save(role);
         return ResponseEntity.ok().build();
     }
@@ -56,5 +60,11 @@ public class RoleController {
         role.setId(id);
         roleRepo.delete(role);
         return ResponseEntity.ok().build();
+    }
+
+    private void validate(Role role) {
+        if (role.getName() == null) {
+            throw new NullPointerException("Role name mustn't be empty");
+        }
     }
 }
