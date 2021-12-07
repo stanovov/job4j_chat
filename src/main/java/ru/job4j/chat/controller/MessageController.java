@@ -6,33 +6,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.chat.model.Message;
-import ru.job4j.chat.repository.MessageRepository;
+import ru.job4j.chat.service.MessageService;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/messages")
 public class MessageController {
 
-    private final MessageRepository messageRepo;
+    private final MessageService messageService;
 
-    public MessageController(MessageRepository messageRepo) {
-        this.messageRepo = messageRepo;
+    public MessageController(MessageService messageService) {
+        this.messageService = messageService;
     }
 
     @GetMapping("/")
     public ResponseEntity<List<Message>> findAll() {
-        return new ResponseEntity<>(
-                StreamSupport.stream(messageRepo.findAll().spliterator(), false).collect(Collectors.toList()),
-                HttpStatus.OK
-        );
+        return new ResponseEntity<>(messageService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Message> findById(@PathVariable int id) {
-        return messageRepo.findById(id)
+        return messageService.findById(id)
                 .map(message -> ResponseEntity.status(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(message))
@@ -44,31 +39,21 @@ public class MessageController {
 
     @PostMapping("/")
     public ResponseEntity<Message> create(@RequestBody Message message) {
-        validate(message);
         return new ResponseEntity<>(
-                messageRepo.save(message),
+                messageService.saveOrUpdate(message),
                 HttpStatus.CREATED
         );
     }
 
     @PutMapping("/")
     public ResponseEntity<Void> update(@RequestBody Message message) {
-        validate(message);
-        messageRepo.save(message);
+        messageService.saveOrUpdate(message);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) {
-        Message message = new Message();
-        message.setId(id);
-        messageRepo.delete(message);
+        messageService.delete(id);
         return ResponseEntity.ok().build();
-    }
-
-    private void validate(Message message) {
-        if (message.getText() == null || message.getPerson() == null || message.getRoom() == null) {
-            throw new NullPointerException("Message text, person and room mustn't be empty");
-        }
     }
 }
