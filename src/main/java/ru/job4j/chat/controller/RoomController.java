@@ -4,9 +4,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.job4j.chat.model.Role;
 import ru.job4j.chat.model.Room;
 import ru.job4j.chat.service.RoomService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @RestController
@@ -46,6 +48,14 @@ public class RoomController {
     public ResponseEntity<Void> update(@RequestBody Room room) {
         roomService.saveOrUpdate(room);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/")
+    public ResponseEntity<Room> patch(@RequestBody Room room) throws InvocationTargetException, IllegalAccessException {
+        return new ResponseEntity<>(
+                roomService.patch(room),
+                HttpStatus.OK
+        );
     }
 
     @DeleteMapping("/{id}")

@@ -7,6 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.chat.model.Role;
 import ru.job4j.chat.service.RoleService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @RestController
@@ -46,6 +47,14 @@ public class RoleController {
     public ResponseEntity<Void> update(@RequestBody Role role) {
         roleService.saveOrUpdate(role);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/")
+    public ResponseEntity<Role> patch(@RequestBody Role role) throws InvocationTargetException, IllegalAccessException {
+        return new ResponseEntity<>(
+                roleService.patch(role),
+                HttpStatus.OK
+        );
     }
 
     @DeleteMapping("/{id}")

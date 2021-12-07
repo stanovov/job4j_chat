@@ -15,6 +15,7 @@ import ru.job4j.chat.service.PersonService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -69,6 +70,14 @@ public class PersonController {
     public ResponseEntity<Void> update(@RequestBody Person person) {
         personService.saveOrUpdate(person);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/")
+    public ResponseEntity<Person> patch(@RequestBody Person person) throws InvocationTargetException, IllegalAccessException {
+        return new ResponseEntity<>(
+                personService.patch(person),
+                HttpStatus.OK
+        );
     }
 
     @PutMapping("/{id}/role/")
