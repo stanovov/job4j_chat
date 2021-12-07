@@ -2,12 +2,15 @@ package ru.job4j.chat.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.job4j.chat.handlers.Operation;
 import ru.job4j.chat.model.Role;
 import ru.job4j.chat.model.Room;
 import ru.job4j.chat.service.RoomService;
 
+import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -37,7 +40,8 @@ public class RoomController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Room> create(@RequestBody Room room) {
+    @Validated(Operation.OnCreate.class)
+    public ResponseEntity<Room> create(@Valid @RequestBody Room room) {
         return new ResponseEntity<>(
                 roomService.saveOrUpdate(room),
                 HttpStatus.CREATED
@@ -45,13 +49,15 @@ public class RoomController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Room room) {
+    @Validated(Operation.OnUpdate.class)
+    public ResponseEntity<Void> update(@Valid @RequestBody Room room) {
         roomService.saveOrUpdate(room);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/")
-    public ResponseEntity<Room> patch(@RequestBody Room room) throws InvocationTargetException, IllegalAccessException {
+    @Validated(Operation.OnUpdate.class)
+    public ResponseEntity<Room> patch(@Valid @RequestBody Room room) throws InvocationTargetException, IllegalAccessException {
         return new ResponseEntity<>(
                 roomService.patch(room),
                 HttpStatus.OK
@@ -59,7 +65,7 @@ public class RoomController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable int id) {
+    public ResponseEntity<Void> delete(@Valid @PathVariable int id) {
         roomService.delete(id);
         return ResponseEntity.ok().build();
     }

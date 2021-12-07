@@ -34,7 +34,6 @@ public class RoleService {
     }
 
     public Role saveOrUpdate(Role role) {
-        validate(role);
         return roleRepo.save(role);
     }
 
@@ -72,9 +71,4 @@ public class RoleService {
         roleRepo.delete(role);
     }
 
-    private void validate(Role role) {
-        if (role.getName() == null) {
-            throw new NullPointerException("Role name mustn't be empty");
-        }
-    }
 }

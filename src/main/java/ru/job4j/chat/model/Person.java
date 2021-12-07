@@ -1,6 +1,10 @@
 package ru.job4j.chat.model;
 
+import ru.job4j.chat.handlers.Operation;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -10,12 +14,19 @@ import java.util.Set;
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull(message = "Id must be non null", groups = Operation.OnUpdate.class)
     private int id;
 
     @Column(unique = true, nullable = false)
+    @NotBlank(message = "Username must be not empty", groups = {
+            Operation.OnCreate.class, Operation.OnUpdate.class
+    })
     private String username;
 
     @Column(nullable = false)
+    @NotBlank(message = "Password must be not empty", groups = {
+            Operation.OnCreate.class, Operation.OnUpdate.class
+    })
     private String password;
 
     @ManyToOne

@@ -51,7 +51,7 @@ public class PersonService {
     }
 
     public void saveOrUpdate(Person person) {
-        validate(person);
+        validatePassword(person.getPassword());
         person.setPassword(encoder.encode(person.getPassword()));
         personRepo.save(person);
     }
@@ -121,13 +121,6 @@ public class PersonService {
         Person person = personRepo.findById(personId)
                 .orElseThrow(IllegalArgumentException::new);
         person.getRooms().removeIf(room -> room.getId() == roomId);
-    }
-
-    private void validate(Person person) {
-        if (person.getUsername() == null || person.getPassword() == null) {
-            throw new NullPointerException("User username and password mustn't be empty");
-        }
-        validatePassword(person.getPassword());
     }
 
     private void validatePassword(String password) {

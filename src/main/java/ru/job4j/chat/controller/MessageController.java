@@ -3,12 +3,14 @@ package ru.job4j.chat.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.job4j.chat.handlers.Operation;
 import ru.job4j.chat.model.Message;
-import ru.job4j.chat.model.Role;
 import ru.job4j.chat.service.MessageService;
 
+import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -40,7 +42,8 @@ public class MessageController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Message> create(@RequestBody Message message) {
+    @Validated(Operation.OnCreate.class)
+    public ResponseEntity<Message> create(@Valid @RequestBody Message message) {
         return new ResponseEntity<>(
                 messageService.saveOrUpdate(message),
                 HttpStatus.CREATED
@@ -48,13 +51,15 @@ public class MessageController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Message message) {
+    @Validated(Operation.OnUpdate.class)
+    public ResponseEntity<Void> update(@Valid @RequestBody Message message) {
         messageService.saveOrUpdate(message);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/")
-    public ResponseEntity<Message> patch(@RequestBody Message message) throws InvocationTargetException, IllegalAccessException {
+    @Validated(Operation.OnUpdate.class)
+    public ResponseEntity<Message> patch(@Valid @RequestBody Message message) throws InvocationTargetException, IllegalAccessException {
         return new ResponseEntity<>(
                 messageService.patch(message),
                 HttpStatus.OK

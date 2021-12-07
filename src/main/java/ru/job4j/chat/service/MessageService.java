@@ -34,7 +34,6 @@ public class MessageService {
     }
 
     public Message saveOrUpdate(Message message) {
-        validate(message);
         return messageRepo.save(message);
     }
 
@@ -70,11 +69,5 @@ public class MessageService {
         Message message = new Message();
         message.setId(id);
         messageRepo.delete(message);
-    }
-
-    private void validate(Message message) {
-        if (message.getText() == null || message.getPerson() == null || message.getRoom() == null) {
-            throw new NullPointerException("Message text, person and room mustn't be empty");
-        }
     }
 }

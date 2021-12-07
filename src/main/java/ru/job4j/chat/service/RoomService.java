@@ -34,7 +34,6 @@ public class RoomService {
     }
 
     public Room saveOrUpdate(Room room) {
-        validate(room);
         return roomRepo.save(room);
     }
 
@@ -70,11 +69,5 @@ public class RoomService {
         Room room = new Room();
         room.setId(id);
         roomRepo.delete(room);
-    }
-
-    private void validate(Room room) {
-        if (room.getName() == null) {
-            throw new NullPointerException("Room name mustn't be empty");
-        }
     }
 }
