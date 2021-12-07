@@ -1,6 +1,7 @@
 package ru.job4j.chat.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,16 +23,19 @@ public class MessageController {
     }
 
     @GetMapping("/")
-    public List<Message> findAll() {
-        return StreamSupport.stream(
-                messageRepo.findAll().spliterator(), false
-        ).collect(Collectors.toList());
+    public ResponseEntity<List<Message>> findAll() {
+        return new ResponseEntity<>(
+                StreamSupport.stream(messageRepo.findAll().spliterator(), false).collect(Collectors.toList()),
+                HttpStatus.OK
+        );
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Message> findById(@PathVariable int id) {
         return messageRepo.findById(id)
-                .map(message -> new ResponseEntity<>(message, HttpStatus.OK))
+                .map(message -> ResponseEntity.status(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(message))
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         String.format("Message is not found by id %d", id)
