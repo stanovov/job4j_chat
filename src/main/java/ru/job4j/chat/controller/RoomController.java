@@ -6,12 +6,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.chat.handlers.Operation;
-import ru.job4j.chat.model.Role;
 import ru.job4j.chat.model.Room;
 import ru.job4j.chat.service.RoomService;
 
 import javax.validation.Valid;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @RestController
@@ -57,7 +55,7 @@ public class RoomController {
 
     @PatchMapping("/")
     @Validated(Operation.OnUpdate.class)
-    public ResponseEntity<Room> patch(@Valid @RequestBody Room room) throws InvocationTargetException, IllegalAccessException {
+    public ResponseEntity<Room> patch(@Valid @RequestBody Room room) {
         return new ResponseEntity<>(
                 roomService.patch(room),
                 HttpStatus.OK

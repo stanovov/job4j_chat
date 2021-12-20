@@ -10,7 +10,6 @@ import ru.job4j.chat.model.Role;
 import ru.job4j.chat.service.RoleService;
 
 import javax.validation.Valid;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @RestController
@@ -56,7 +55,7 @@ public class RoleController {
 
     @PatchMapping("/")
     @Validated(Operation.OnUpdate.class)
-    public ResponseEntity<Role> patch(@Valid @RequestBody Role role) throws InvocationTargetException, IllegalAccessException {
+    public ResponseEntity<Role> patch(@Valid @RequestBody Role role) {
         return new ResponseEntity<>(
                 roleService.patch(role),
                 HttpStatus.OK

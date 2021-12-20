@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -79,7 +78,7 @@ public class PersonController {
 
     @PatchMapping("/")
     @Validated(Operation.OnUpdate.class)
-    public ResponseEntity<Person> patch(@Valid @RequestBody Person person) throws InvocationTargetException, IllegalAccessException {
+    public ResponseEntity<Person> patch(@Valid @RequestBody Person person) {
         return new ResponseEntity<>(
                 personService.patch(person),
                 HttpStatus.OK

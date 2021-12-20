@@ -11,7 +11,6 @@ import ru.job4j.chat.model.Message;
 import ru.job4j.chat.service.MessageService;
 
 import javax.validation.Valid;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @RestController
@@ -59,7 +58,7 @@ public class MessageController {
 
     @PatchMapping("/")
     @Validated(Operation.OnUpdate.class)
-    public ResponseEntity<Message> patch(@Valid @RequestBody Message message) throws InvocationTargetException, IllegalAccessException {
+    public ResponseEntity<Message> patch(@Valid @RequestBody Message message) {
         return new ResponseEntity<>(
                 messageService.patch(message),
                 HttpStatus.OK
